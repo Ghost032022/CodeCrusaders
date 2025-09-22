@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>AI Research Assistant for Business Professionals</title>
+
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+  body, html {
+
+    margin: 0; padding: 0; height: 100%; overflow-x: hidden;
+
+    font-family: 'Inter', sans-serif;
+
+    background: #0a0a23;
+
+    color: #eee;
+
+    perspective: 1200px;
+
+    perspective-origin: center top;
+
+    position: relative;
+
+    overflow-x: hidden;
+
+  }
+
+  nav {
+
+    text-align: center;
+
+    margin: 1rem 0 2rem 0;
+
+    position: sticky;
+
+    top: 0;
+
+    background: rgba(10, 10, 35, 0.85);
+
+    z-index: 20;
+
+    padding: 1rem 0;
+
+    box-shadow: 0 2px 12px rgba(0, 255, 252, 0.5);
+
+    transform-style: preserve-3d;
+
+  }
+
+  nav button {
+
+    background: #00ccc4;
+
+    border: none;
+
+    border-radius: 50px;
+
+    padding: 0.75rem 2rem;
+
+    margin: 0 1rem;
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+
+    color: #0a0a23;
+
+    cursor: pointer;
+
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+    box-shadow: 0 4px 15px rgba(0, 204, 196, 0.6);
+
+    transform-style: preserve-3d;
+
+  }
+
+  nav button:hover {
+
+    background-color: #00fff4;
+
+    box-shadow: 0 6px 25px #00fff4;
+
+    transform: translateZ(10px);
+
+  }
+
+  header {
+
+    padding: 2rem 1rem 1rem 1rem;
+
+    text-align: center;
+
+    transform-style: preserve-3d;
+
+    position: relative;
+
+    z-index: 10;
+
+  }
+
+  h1 {
+
+    font-size: 3rem;
+
+    margin-bottom: 0.3rem;
+
+    color: #4deeea;
+
+    text-shadow:
+
+      0 0 10px #00fff4,
+
+      0 0 20px #00fff4,
+
+      0 0 30px #00cfc6,
+
+      0 0 40px #00b1a6,
+
+      0 0 50px #008f7e,
+
+      0 0 60px #00725e;
+
+    transform-style: preserve-3d;
+
+  }
+
+  h2 {
+
+    color: #00ffc8;
+
+    margin-top: 0;
+
+    margin-bottom: 1rem;
+
+    font-weight: 700;
+
+    text-shadow: 0 0 10px #00fff4;
+
+    transform-style: preserve-3d;
+
+  }
+
+  p {
+
+    max-width: 900px;
+
+    margin: 0 auto 1.2rem auto;
+
+    line-height: 1.6;
+
+    font-size: 1.12rem;
+
+    color: #ddd;
+
+    transform-style: preserve-3d;
+
+  }
+
+  ul {
+
+    max-width: 900px;
+
+    margin: 0 auto 2rem auto;
+
+    padding-left: 1.2rem;
+
+    list-style-type: disc;
+
+    color: #a0f0e8;
+
+    transform-style: preserve-3d;
+
+  }
+
+  ul li {
+
+    margin-bottom: 0.8rem;
+
+    font-size: 1.1rem;
+
+  }
+
+  .info-boxes {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 1.8rem;
+
+    max-width: 1000px;
+
+    margin: 1rem auto 4rem auto;
+
+    transform-style: preserve-3d;
+
+    position: relative;
+
+    z-index: 10;
+
+  }
+
+  .info-box {
+
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+
+    border-radius: 16px;
+
+    box-shadow:
+
+      0 0 15px rgba(0, 255, 252, 0.6),
+
+      inset 0 0 15px rgba(0, 255, 252, 0.2);
+
+    width: 300px;
+
+    padding: 1.8rem 1.5rem 2.2rem 1.5rem;
+
+    text-align: center;
+
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+    cursor: default;
+
+    color: #bfefff;
+
+    transform-style: preserve-3d;
+
+    perspective: 600px;
+
+  }
+
+  .info-box:hover {
+
+    box-shadow:
+
+      0 0 40px #00fff4,
+
+      0 0 60px #00fff4,
+
+      inset 0 0 30px #00fff4;
+
+    transform: translateY(-10px) translateZ(30px);
+
+  }
+
+  .info-box strong {
+
+    display: block;
+
+    font-size: 1.3rem;
+
+    margin-bottom: 1rem;
+
+    color: #00fff4;
+
+    text-shadow:
+
+      0 0 8px #00fff4,
+
+      0 0 16px #00cfc6,
+
+      0 0 24px #009e89;
+
+    transform-style: preserve-3d;
+
+  }
+
+  .info-image {
+
+    width: 100%;
+
+    height: 140px;
+
+    border-radius: 12px;
+
+    object-fit: cover;
+
+    margin-bottom: 1.2rem;
+
+    box-shadow:
+
+      0 5px 15px rgba(0, 255, 252, 0.4),
+
+      inset 0 0 15px rgba(0, 255, 252, 0.2);
+
+    transform-style: preserve-3d;
+
+  }
+
+  .glow-box {
+
+    max-width: 600px;
+
+    margin: 1rem auto 3rem auto;
+
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+
+    border-radius: 20px;
+
+    padding: 2rem 2.5rem;
+
+    box-shadow:
+
+      0 0 25px #00fff4,
+
+      0 0 45px #00fff4,
+
+      inset 0 0 30px #00fff4;
+
+    color: #00fff4;
+
+    font-size: 1.7rem;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    cursor: default;
+
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+    transform-style: preserve-3d;
+
+    perspective: 600px;
+
+  }
+
+  .glow-box:hover {
+
+    box-shadow:
+
+      0 0 50px #00fff4,
+
+      0 0 80px #00fff4,
+
+      inset 0 0 50px #00fff4;
+
+    transform: translateZ(40px) translateY(-10px);
+
+  }
+
+  @media (max-width: 680px) {
+
+    .info-boxes {
+
+      flex-direction: column;
+
+      align-items: center;
+
+    }
+
+    nav button {
+
+      margin: 0.7rem 0.5rem;
+
+      width: 80%;
+
+      max-width: 300px;
+
+    }
+
+    .glow-box {
+
+      font-size: 1.4rem;
+
+      padding: 1.5rem 2rem;
+
+      max-width: 90%;
+
+    }
+
+  }
+
+
+
+  /* Robot styled as teddy bear */
+
+#robot {
+
+  position: fixed;
+
+  width: 140px;
+
+  height: 160px;
+
+  bottom: 40px;
+
+  left: 20px;
+
+  background: #d2946e; /* teddy bear brown */
+
+  border-radius: 60% 60% 70% 70% / 60% 60% 80% 80%;
+
+  box-shadow:
+
+    0 0 25px #d2946e,
+
+    inset 0 0 35px #b07a52;
+
+  cursor: pointer;
+
+  z-index: 30;
+
+  user-select: none;
+
+  transform-style: preserve-3d;
+
+  animation: robotIdle 3s ease-in-out infinite alternate;
+
+  border: 3px solid #a5693f;
+
+}
+
+
+
+#robot .face {
+
+  position: relative;
+
+  top: 40px;
+
+  margin: 0 auto;
+
+  width: 100px;
+
+  height: 100px;
+
+  background: #f3e0c0; /* lighter face */
+
+  border-radius: 50% / 40%;
+
+  box-shadow:
+
+    inset 0 10px 20px #f9f2e3,
+
+    0 0 20px #d2946e;
+
+  border: 2px solid #a5693f;
+
+}
+
+
+
+#robot .eye {
+
+  position: absolute;
+
+  top: 38px;
+
+  width: 16px;
+
+  height: 16px;
+
+  background: #5a3b1f; /* dark eye */
+
+  border-radius: 50%;
+
+  box-shadow:
+
+    0 0 10px #5a3b1f,
+
+    inset 0 0 10px #3a260f;
+
+}
+
+
+
+#robot .eye.left {
+
+  left: 28px;
+
+}
+
+
+
+#robot .eye.right {
+
+  right: 28px;
+
+}
+
+
+
+#robot .mouth {
+
+  position: absolute;
+
+  bottom: 30px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 50px;
+
+  height: 15px;
+
+  background: #a5693f;
+
+  border-radius: 50% / 40%;
+
+  box-shadow: 0 0 15px #8c5e30;
+
+}
+
+
+
+#robot .arm {
+
+  position: absolute;
+
+  width: 25px;
+
+  height: 70px;
+
+  background: #d2946e;
+
+  border-radius: 30% 30% 50% 50% / 50% 50% 70% 70%;
+
+  top: 55px;
+
+  border: 2px solid #a5693f;
+
+}
+
+
+
+#robot .arm.left {
+
+  left: -25px;
+
+  transform-origin: top center;
+
+  animation: armWave 4s ease-in-out infinite;
+
+}
+
+
+
+#robot .arm.right {
+
+  right: -25px;
+
+}
+
+
+
+/* Keep original animations */
+
+@keyframes armWave {
+
+  0%, 100% { transform: rotate(0deg); }
+
+  50% { transform: rotate(25deg) translateY(6px); }
+
+}
+
+@keyframes robotIdle {
+
+  0% { transform: translateZ(0) translateY(0); }
+
+  100% { transform: translateZ(10px) translateY(-6px); }
+
+}
+
+
+
+#robot.sit {
+
+  animation: none;
+
+  transform: translateZ(40px) translateY(-15px);
+
+}
+
+#robot.eat {
+
+  animation: eatAnimation 2s ease-in-out infinite;
+
+}
+
+@keyframes eatAnimation {
+
+  0%, 100% { transform: translateZ(0) translateY(0); }
+
+  50% { transform: translateZ(10px) translateY(-4px) rotate(10deg); }
+
+}
+
+
+
+  /* New 3D Background Stars */
+
+  #stars {
+
+    position: fixed;
+
+    top: 0; left: 0;
+
+    width: 100vw; height: 100vh;
+
+    overflow: visible;
+
+    pointer-events: none;
+
+    z-index: -2;
+
+  }
+
+  .star {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    background: #00fff4;
+
+    box-shadow: 0 0 8px #00fff4;
+
+    animation-timing-function: linear;
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<div id="stars"></div>
+
+
+
+<nav>
+  <button onclick="location.href='chat1.html'">CHAT with AI</button>
+  <button onclick="location.href='login.html'">LOGIN</button>
+  <button onclick="location.href='features1.html'">FEATURES</button>
+</nav>
+
+
+<header>
+
+  <h1>Welcome to AI Research Assistant for Business Professionals</h1>
+
+  <p>Our AI Research Assistant is designed specifically to empower business professionals by providing cutting-edge artificial intelligence research tools tailored to your needs. Whether you are diving into new markets, optimizing strategies, or seeking data-driven insights, our AI assistant is your perfect partner.</p>
+
+</header>
+
+
+
+<section>
+
+  <div class="glow-box" tabindex="0" id="tutorialTitle">Why Choose Our AI Assistant?</div>
+
+</section>
+
+
+
+<section class="info-boxes" aria-label="Information about AI assistant benefits">
+
+  <div class="info-box" tabindex="0" id="box1">
+
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80" alt="Intelligent Research" class="info-image" />
+
+    <strong>Intelligent Research</strong>Get fast, accurate, and actionable business insights.
+
+  </div>
+
+  <div class="info-box" tabindex="0" id="box2">
+
+    <img src="https://media.licdn.com/dms/image/v2/D4D12AQEgMqsPmLZRBQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1721807524597?e=2147483647&v=beta&t=WrCpA4cwAQPEx3163w97k5GAYT9eX7TeXsmYi5PdUQY" alt="Seamless Integration" class="info-image" />
+
+    <strong>Seamless Integration</strong>Compatible with your existing business workflow and tools.
+
+  </div>
+
+  <div class="info-box" tabindex="0" id="box3">
+
+    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=400&q=80" alt="Time Saving" class="info-image" />
+
+    <strong>Time-Saving</strong>Automate complex research tasks and focus on strategic decision-making.
+
+  </div>
+
+  <div class="info-box" tabindex="0" id="box4">
+
+    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" alt="Up-to-Date Data" class="info-image" />
+
+    <strong>Up-to-Date Data</strong>Powered by the latest advancements in AI for business intelligence.
+
+  </div>
+
+  <div class="info-box" tabindex="0" id="box5">
+
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjp6Umz6VeRq_9yj_8Ula8vp9YuF3ijutFmw&s" alt="Business Analytics" class="info-image" />
+
+    <strong>Business Analytics</strong>Deep analysis to drive smarter business decisions.
+
+  </div>
+
+  <div class="info-box" tabindex="0" id="box6">
+
+    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" alt="Automated Reports" class="info-image" />
+
+    <strong>Automated Reports</strong>Generate comprehensive reports with minimal effort.
+
+  </div>
+
+</section>
+
+
+
+<section>
+
+  <div class="glow-box" tabindex="0" id="featuresTitle">Features Designed for Business Success</div>
+
+</section>
+
+
+
+<section class="glow-box" tabindex="0" aria-label="Features and statistics" style="max-width: 700px; margin: 1rem auto 4rem auto; font-size: 1.1rem; padding: 2rem 1.5rem;">
+
+  <table style="width: 100%; border-collapse: collapse; color: #00fff4;">
+
+    <thead>
+
+      <tr>
+
+        <th style="text-align: left; padding-bottom: 1rem; border-bottom: 1px solid #00fff4;">Feature</th>
+
+        <th style="text-align: right; padding-bottom: 1rem; border-bottom: 1px solid #00fff4;">Impact</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr>
+
+        <td>Real-time AI-powered chat for instant answers and advice</td>
+
+        <td style="text-align: right;">98% satisfaction</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Security-focused login protecting your data and business secrets</td>
+
+        <td style="text-align: right;">99.9% uptime</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Customer testimonials showcasing proven results worldwide</td>
+
+        <td style="text-align: right;">500+ success stories</td>
+
+      </tr>
+
+      <tr>
+
+        <td>Interactive glowing info boxes for engaging navigation</td>
+
+        <td style="text-align: right;">85% user engagement</td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</section>
+
+
+
+<!-- Robot element -->
+
+<div id="robot" aria-label="Tutorial Robot" role="img" tabindex="0" aria-live="polite" aria-atomic="true">
+
+  <div class="face">
+
+    <div class="eye left"></div>
+
+    <div class="eye right"></div>
+
+    <div class="mouth"></div>
+
+  </div>
+
+  <div class="arm left"></div>
+
+  <div class="arm right"></div>
+
+</div>
+
+
+
+<script>
+
+  // Create 3D starfield background with depth and animation along z-axis
+
+  const starsContainer = document.getElementById('stars');
+
+  const starCount = 150;
+
+  const stars = [];
+
+  const maxDepth = 1000;
+
+
+
+  function randomRange(min, max) {
+
+    return Math.random() * (max - min) + min;
+
+  }
+
+
+
+  // Create stars with x,y,z and DOM element
+
+  for(let i=0; i<starCount; i++) {
+
+    const star = document.createElement('div');
+
+    star.classList.add('star');
+
+    const size = randomRange(1,3);
+
+    star.style.width = size + 'px';
+
+    star.style.height = size + 'px';
+
+    starsContainer.appendChild(star);
+
+    stars.push({
+
+      el: star,
+
+      x: randomRange(-window.innerWidth/2, window.innerWidth/2),
+
+      y: randomRange(-window.innerHeight/2, window.innerHeight/2),
+
+      z:maxDepth),
+
+      size: size,
+
+      speed: randomRange(0.5, 2)
+
+    });
+
+  }
+
+
+
+  function animateStars() {
+
+    const cx = window.innerWidth / 2;
+
+    const cy = window.innerHeight / 2;
+
+    stars.forEach(star => {
+
+      star.z -= star.speed;
+
+      if (star.z < 1) star.z = maxDepth;
+
+      const scale = 700 / (700 + star.z);
+
+      const x = cx + star.x * scale;
+
+      const y = cy + star.y * scale;
+
+      const size = star.size * scale * 1.8;
+
+      star.el.style.transform = translate3d(${x}px, ${y}px, 0) scale(${scale});
+
+      star.el.style.opacity = Math.min(1, scale * 2);
+
+      star.el.style.width = size + 'px';
+
+      star.el.style.height = size + 'px';
+
+      star.el.style.filter = drop-shadow(0 0 ${size/2}px #00fff4);
+
+    });
+
+    requestAnimationFrame(animateStars);
+
+  }
+
+  animateStars();
+
+
+
+  // Robot tutorial logic (same as before)
+
+  const robot = document.getElementById('robot');
+
+
+
+  const positions = [
+
+    { left: 20, top: null, bottom: 40, description: 'bottom left' },
+
+    { left: '50%', top: 40, bottom: null, transform: 'translateX(-50%)', description: 'top center' },
+
+    { left: '50%', top: '50%', bottom: null, transform: 'translate(-50%, -50%)', description: 'center middle' },
+
+    { left: 'calc(100% - 140px)', top: null, bottom: 40, description: 'bottom right' },
+
+  ];
+
+
+
+  const tutorialLines = [
+
+    "Hello! I'm your AI assistant robot guide, here to help you explore the website.",
+
+    "This website is designed to empower business professionals with intelligent AI research tools.",
+
+    "The glowing boxes below describe key features like Intelligent Research, Seamless Integration, and Time-Saving automation.",
+
+    "You can chat with the AI, login securely, or view testimonials using the buttons at the top.",
+
+    "I will move around to guide you through this information. Feel free to click me to hear these again!",
+
+    "If you stay inactive for a while, I'll take a little break and have a snack. Don't worry, I'll be back soon to help you!"
+
+  ];
+
+
+
+  let tutorialStep = 0;
+
+  const synth = window.speechSynthesis;
+
+
+
+  function speak(text) {
+
+    if (synth.speaking) {
+
+      synth.cancel();
+
+    }
+
+    if (!text) return;
+
+    const utterThis = new SpeechSynthesisUtterance(text);
+
+    utterThis.lang = 'en-US';
+
+    utterThis.rate = 1;
+
+    synth.speak(utterThis);
+
+  }
+
+
+
+  function moveRobotTo(pos, transform = '') {
+
+    robot.style.transition = 'all 2s ease-in-out';
+
+    robot.style.left = typeof pos.left === 'number' ? pos.left + 'px' : pos.left;
+
+    if (pos.top !== null) {
+
+      robot.style.top = typeof pos.top === 'number' ? pos.top + 'px' : pos.top;
+
+      robot.style.bottom = '';
+
+    } else {
+
+      robot.style.bottom = typeof pos.bottom === 'number' ? pos.bottom + 'px' : pos.bottom;
+
+      robot.style.top = '';
+
+    }
+
+    robot.style.transform = transform || '';
+
+  }
+
+
+
+  function robotSitOnElement(el) {
+
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+    const left = rect.left + scrollLeft + rect.width/2 - 70;
+
+    const top = rect.top + scrollTop - 160;
+
+    robot.style.transition = 'all 2s ease-in-out';
+
+    robot.style.left = left + 'px';
+
+    robot.style.top = top + 'px';
+
+    robot.style.bottom = '';
+
+    robot.style.transform = '';
+
+    robot.classList.add('sit');
+
+  }
+
+  function robotStandUp() {
+
+    robot.classList.remove('sit');
+
+  }
+
+
+
+  async function runTutorial() {
+
+    while (true) {
+
+      const pos = positions[tutorialStep % positions.length];
+
+      robotStandUp();
+
+      moveRobotTo(pos, pos.transform || '');
+
+      speak(tutorialLines[tutorialStep % tutorialLines.length]);
+
+      if (tutorialStep % positions.length === 2) {
+
+        await new Promise(r=>setTimeout(r, 2500));
+
+        const boxIndex = (tutorialStep % 6) + 1;
+
+        const box = document.getElementById('box' + boxIndex);
+
+        if(box) {
+
+          robotSitOnElement(box);
+
+          speak(box.querySelector('strong').textContent + '. ' + box.textContent.replace(box.querySelector('strong').textContent, '').trim());
+
+        }
+
+      }
+
+      tutorialStep++;
+
+      await new Promise(r => setTimeout(r, 7000));
+
+    }
+
+  }
+
+  let inactivityTimer;
+
+  function resetInactivityTimer() {
+
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+
+    robot.classList.remove('eat');
+
+    robotStandUp();
+
+    inactivityTimer = setTimeout(() => {
+
+      robot.classList.add('eat');
+
+      speak("I'm taking a little break to recharge. I'll be back soon to help you!");
+
+    }, 120000);
+
+  }
+
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+
+    window.addEventListener(evt, resetInactivityTimer);
+
+  });
+
+  resetInactivityTimer();
+
+
+
+  robot.addEventListener('click', () => {
+
+    if(tutorialStep === 0) tutorialStep = 0; else tutorialStep--;
+
+    speak(tutorialLines[tutorialStep % tutorialLines.length]);
+
+    resetInactivityTimer();
+
+  });
+
+  robot.addEventListener('keydown', (e) => {
+
+    if(e.key === 'Enter' || e.key === ' ') {
+
+      e.preventDefault();
+
+      robot.click();
+
+    }
+
+  });
+
+
+
+  window.onload = () => {
+
+    runTutorial();
+
+  };
+
+  function speakText(text) {
+
+  if (synth.speaking) synth.cancel();
+
+  if (!text) return;
+
+  const utterThis = new SpeechSynthesisUtterance(text);
+
+  utterThis.lang = 'en-US';
+
+  utterThis.rate = 1;
+
+  synth.speak(utterThis);
+
+}
+
+
+
+// For info boxes
+
+document.querySelectorAll('.info-box').forEach(box => {
+
+  box.addEventListener('dblclick', () => {
+
+    const strongText = box.querySelector('strong')?.textContent || '';
+
+    const contentText = box.textContent.replace(strongText, '').trim();
+
+    speakText(strongText + '. ' + contentText);
+
+  });
+
+});
+
+
+
+// For feature table rows (excluding header)
+
+document.querySelectorAll('section[aria-label="Features and statistics"] tbody tr').forEach(row => {
+
+  row.addEventListener('dblclick', () => {
+
+    const cells = row.querySelectorAll('td');
+
+    if (cells.length === 2) {
+
+      speakText(cells[0].textContent + ', impact: ' + cells[1].textContent);
+
+    }
+
+  });
+
+});
+
+unction speakText(text) {
+
+  if (synth.speaking) synth.cancel();
+
+  if (!text) return;
+
+  const utterThis = new SpeechSynthesisUtterance(text);
+
+  utterThis.lang = 'en-US';
+
+  utterThis.rate = 1;
+
+  synth.speak(utterThis);
+
+}
+
+
+
+// Add double-click listeners to info boxes
+
+document.querySelectorAll('.info-box').forEach(box => {
+
+  box.addEventListener('dblclick', () => {
+
+    const strongText = box.querySelector('strong')?.textContent || '';
+
+    const contentText = box.textContent.replace(strongText, '').trim();
+
+    speakText(strongText + '. ' + contentText);
+
+  });
+
+});
+
+
+
+// Add double-click listeners to feature table rows
+
+document.querySelectorAll('section[aria-label="Features and statistics"] tbody tr').forEach(row => {
+
+  row.addEventListener('dblclick', () => {
+
+    const cells = row.querySelectorAll('td');
+
+    if (cells.length === 2) {
+
+      speakText(cells[0].textContent + ', impact: ' + cells[1].textContent);
+
+    }
+
+  });
+
+});
+
+
+
+</script>
+
+</body>
+
+</html>

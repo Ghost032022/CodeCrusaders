@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Ask AI - AI Research Assistant for Business Professionals</title>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+  
+  body, html {
+    margin: 0; padding: 0; height: 100%; overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    background: #0a0a23;
+    color: #eee;
+    perspective: 1200px;
+    perspective-origin: center top;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  nav {
+    text-align: center;
+    margin: 1rem 0 2rem 0;
+    position: sticky;
+    top: 0;
+    background: rgba(10, 10, 35, 0.85);
+    z-index: 20;
+    padding: 1rem 0;
+    box-shadow: 0 2px 12px rgba(0, 255, 252, 0.5);
+    transform-style: preserve-3d;
+  }
+  
+  nav button {
+    background: #00ccc4;
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    margin: 0 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0a0a23;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 204, 196, 0.6);
+    transform-style: preserve-3d;
+  }
+  
+  nav button:hover {
+    background-color: #00fff4;
+    box-shadow: 0 6px 25px #00fff4;
+    transform: translateZ(10px);
+  }
+  
+  header {
+    padding: 2rem 1rem 1rem 1rem;
+    text-align: center;
+    transform-style: preserve-3d;
+    position: relative;
+    z-index: 10;
+  }
+  
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 0.3rem;
+    color: #4deeea;
+    text-shadow:
+      0 0 10px #00fff4,
+      0 0 20px #00fff4,
+      0 0 30px #00cfc6,
+      0 0 40px #00b1a6,
+      0 0 50px #008f7e,
+      0 0 60px #00725e;
+    transform-style: preserve-3d;
+  }
+  
+  p {
+    max-width: 900px;
+    margin: 0 auto 1.2rem auto;
+    line-height: 1.6;
+    font-size: 1.12rem;
+    color: #ddd;
+    transform-style: preserve-3d;
+  }
+  
+  .chat-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 25px rgba(0, 255, 252, 0.6),
+      inset 0 0 15px rgba(0, 255, 252, 0.2);
+    transform-style: preserve-3d;
+    perspective: 600px;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .chat-header {
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+    padding: 1rem;
+    text-align: center;
+    font-weight: 700;
+    color: #00fff4;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px #00fff4;
+    border-bottom: 1px solid rgba(0, 255, 252, 0.3);
+  }
+  
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: rgba(10, 10, 35, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .message {
+    max-width: 80%;
+    padding: 1rem;
+    border-radius: 18px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: messageAppear 0.3s ease;
+  }
+  
+  @keyframes messageAppear {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .user-message {
+    align-self: flex-end;
+    background: linear-gradient(145deg, #00ccc4, #00a8a0);
+    color: #0a0a23;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 4px 15px rgba(0, 204, 196, 0.4);
+  }
+  
+  .ai-message {
+    align-self: flex-start;
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+    color: #ddd;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 4px 15px rgba(0, 255, 252, 0.3);
+  }
+  
+  .ai-message strong {
+    color: #00fff4;
+  }
+  
+  .ai-message .links-container {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(0, 255, 252, 0.3);
+  }
+  
+  .ai-message .link-item {
+    margin-bottom: 0.8rem;
+    padding: 0.5rem;
+    background: rgba(0, 255, 252, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #00fff4;
+  }
+  
+  .ai-message .link-item a {
+    color: #4deeea;
+    text-decoration: none;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  
+  .ai-message .link-item a:hover {
+    text-decoration: underline;
+  }
+  
+  .ai-message .link-item .description {
+    font-size: 0.9rem;
+    color: #a0f0e8;
+  }
+  
+  .ai-message .link-item .best-choice {
+    margin-top: 0.3rem;
+    color: #00ffc8;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  
+  .chat-input-container {
+    display: flex;
+    padding: 1rem;
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+    border-top: 1px solid rgba(0, 255, 252, 0.3);
+    gap: 0.5rem;
+  }
+  
+  .chat-input {
+    flex: 1;
+    background: rgba(10, 10, 35, 0.7);
+    border: 1px solid rgba(0, 255, 252, 0.5);
+    border-radius: 30px;
+    padding: 0.8rem 1.2rem;
+    color: #ddd;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .chat-input:focus {
+    border-color: #00fff4;
+    box-shadow: 0 0 10px rgba(0, 255, 252, 0.5);
+  }
+  
+  .voice-button, .send-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+  }
+  
+  .voice-button {
+    background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  }
+  
+  .voice-button:hover {
+    background: linear-gradient(145deg, #ff8787, #ff6b6b);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+    transform: translateZ(5px);
+  }
+  
+  .voice-button.listening {
+    background: linear-gradient(145deg, #ff3030, #ff0000);
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+  }
+  
+  .send-button {
+    background: linear-gradient(145deg, #00ccc4, #00a8a0);
+    box-shadow: 0 4px 15px rgba(0, 204, 196, 0.4);
+  }
+  
+  .send-button:hover {
+    background: linear-gradient(145deg, #00fff4, #00ccc4);
+    box-shadow: 0 6px 20px rgba(0, 255, 252, 0.6);
+    transform: translateZ(5px);
+  }
+  
+  .voice-icon, .send-icon {
+    width: 24px;
+    height: 24px;
+    fill: white;
+  }
+  
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+    border-radius: 18px;
+    border-bottom-left-radius: 5px;
+    width: fit-content;
+    margin-bottom: 1rem;
+  }
+  
+  .typing-indicator span {
+    height: 10px;
+    width: 10px;
+    background: #00fff4;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: typing 1.4s infinite;
+  }
+  
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes typing {
+    0%, 60%, 100% {
+      transform: translateY(0);
+    }
+    30% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .instructions {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: linear-gradient(145deg, #102038, #0d1b2a);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow:
+      0 0 15px rgba(0, 255, 252, 0.6),
+      inset 0 0 15px rgba(0, 255, 252, 0.2);
+    transform-style: preserve-3d;
+    perspective: 600px;
+  }
+  
+  .instructions h3 {
+    color: #00fff4;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .instructions ul {
+    color: #a0f0e8;
+    padding-left: 1.5rem;
+  }
+  
+  .instructions li {
+    margin-bottom: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .chat-container {
+      height: 70vh;
+      margin: 1rem;
+    }
+    
+    nav button {
+      margin: 0.7rem 0.5rem;
+      width: 80%;
+      max-width: 300px;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+  }
+
+  /* Robot styled as teddy bear */
+  #robot {
+    position: fixed;
+    width: 140px;
+    height: 160px;
+    bottom: 40px;
+    left: 20px;
+    background: #d2946e; /* teddy bear brown */
+    border-radius: 60% 60% 70% 70% / 60% 60% 80% 80%;
+    box-shadow:
+      0 0 25px #d2946e,
+      inset 0 0 35px #b07a52;
+    cursor: pointer;
+    z-index: 30;
+    user-select: none;
+    transform-style: preserve-3d;
+    animation: robotIdle 3s ease-in-out infinite alternate;
+    border: 3px solid #a5693f;
+    transition: all 0.5s ease;
+  }
+
+  #robot .face {
+    position: relative;
+    top: 40px;
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    background: #f3e0c0; /* lighter face */
+    border-radius: 50% / 40%;
+    box-shadow:
+      inset 0 10px 20px #f9f2e3,
+      0 0 20px #d2946e;
+    border: 2px solid #a5693f;
+  }
+
+  #robot .eye {
+    position: absolute;
+    top: 38px;
+    width: 16px;
+    height: 16px;
+    background: #5a3b1f; /* dark eye */
+    border-radius: 50%;
+    box-shadow:
+      0 0 10px #5a3b1f,
+      inset 0 0 10px #3a260f;
+  }
+
+  #robot .eye.left {
+    left: 28px;
+  }
+
+  #robot .eye.right {
+    right: 28px;
+  }
+
+  #robot .mouth {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 15px;
+    background: #a5693f;
+    border-radius: 50% / 40%;
+    box-shadow: 0 0 15px #8c5e30;
+  }
+
+  #robot .arm {
+    position: absolute;
+    width: 25px;
+    height: 70px;
+    background: #d2946e;
+    border-radius: 30% 30% 50% 50% / 50% 50% 70% 70%;
+    top: 55px;
+    border: 2px solid #a5693f;
+  }
+
+  #robot .arm.left {
+    left: -25px;
+    transform-origin: top center;
+    animation: armWave 4s ease-in-out infinite;
+  }
+
+  #robot .arm.right {
+    right: -25px;
+  }
+
+  /* Speech bubble */
+  .speech-bubble {
+    position: absolute;
+    bottom: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 200px;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 255, 252, 0.5);
+    z-index: 31;
+  }
+
+  .speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid rgba(255, 255, 255, 0.9);
+  }
+
+  .speech-bubble.show {
+    opacity: 1;
+  }
+
+  /* Keep original animations */
+  @keyframes armWave {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(25deg) translateY(6px); }
+  }
+  
+  @keyframes robotIdle {
+    0% { transform: translateZ(0) translateY(0); }
+    100% { transform: translateZ(10px) translateY(-6px); }
+  }
+
+  @keyframes robotWalk {
+    0%, 100% { transform: translateZ(0) translateY(0) rotate(0deg); }
+    25% { transform: translateZ(5px) translateY(-3px) rotate(-5deg); }
+    75% { transform: translateZ(5px) translateY(-3px) rotate(5deg); }
+  }
+
+  #robot.walk {
+    animation: robotWalk 0.8s ease-in-out infinite;
+  }
+
+  #robot.sit {
+    animation: none;
+    transform: translateZ(40px) translateY(-15px);
+  }
+  
+  #robot.eat {
+    animation: eatAnimation 2s ease-in-out infinite;
+  }
+  
+  @keyframes eatAnimation {
+    0%, 100% { transform: translateZ(0) translateY(0); }
+    50% { transform: translateZ(10px) translateY(-4px) rotate(10deg); }
+  }
+
+  /* New 3D Background Stars */
+  #stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    overflow: visible;
+    pointer-events: none;
+    z-index: -2;
+  }
+  
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #00fff4;
+    box-shadow: 0 0 8px #00fff4;
+    animation-timing-function: linear;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="stars"></div>
+
+<nav>
+  <button onclick="location.href='home.html'">Home</button>
+
+  <button onclick="location.href='login.html'">Login</button>
+</nav>
+
+<header>
+  <h1>Ask AI</h1>
+  <p>Get intelligent answers, curated resources, and expert recommendations for your business needs. Our AI assistant will provide you with the best links and suggestions from across the web.</p>
+</header>
+
+<div class="instructions">
+  <h3>How to Use This AI Assistant</h3>
+  <ul>
+    <li>Type your question in the chat box or use the voice button to speak your query</li>
+    <li>Our AI will analyze your request and provide relevant links and resources</li>
+    <li>Each recommendation includes an explanation of why it's valuable for your business</li>
+    <li>The AI will highlight the best choice based on your specific needs</li>
+    <li>Click on any link to open it in a new tab</li>
+  </ul>
+</div>
+
+<div class="chat-container">
+  <div class="chat-header">
+    AI Research Assistant - Ready to Help
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="ai-message">
+      <strong>AI Assistant:</strong> Hello! I'm your AI research assistant. Ask me anything related to business, and I'll provide you with the best resources and links from across the web. What would you like to know today?
+    </div>
+  </div>
+  <div class="chat-input-container">
+    <input type="text" class="chat-input" id="chatInput" placeholder="Type your question here..." />
+    <button class="voice-button" id="voiceButton" aria-label="Voice input">
+      <svg class="voice-icon" viewBox="0 0 24 24">
+        <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+      </svg>
+    </button>
+    <button class="send-button" id="sendButton" aria-label="Send message">
+      <svg class="send-icon" viewBox="0 0 24 24">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Robot element -->
+<div id="robot" aria-label="Tutorial Robot" role="img" tabindex="0" aria-live="polite" aria-atomic="true">
+  <div class="face">
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="mouth"></div>
+  </div>
+  <div class="arm left"></div>
+  <div class="arm right"></div>
+  <div class="speech-bubble" id="speechBubble">Hello!</div>
+</div>
+
+<script>
+  // Create 3D starfield background with depth and animation along z-axis
+  const starsContainer = document.getElementById('stars');
+  const starCount = 150;
+  const stars = [];
+  const maxDepth = 1000;
+
+  function randomRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  // Create stars with x,y,z and DOM element
+  for(let i=0; i<starCount; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    const size = randomRange(1,3);
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    starsContainer.appendChild(star);
+    stars.push({
+      el: star,
+      x: randomRange(-window.innerWidth/2, window.innerWidth/2),
+      y: randomRange(-window.innerHeight/2, window.innerHeight/2),
+      z: maxDepth,
+      size: size,
+      speed: randomRange(0.5, 2)
+    });
+  }
+
+  function animateStars() {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    stars.forEach(star => {
+      star.z -= star.speed;
+      if (star.z < 1) star.z = maxDepth;
+      const scale = 700 / (700 + star.z);
+      const x = cx + star.x * scale;
+      const y = cy + star.y * scale;
+      const size = star.size * scale * 1.8;
+      star.el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+      star.el.style.opacity = Math.min(1, scale * 2);
+      star.el.style.width = size + 'px';
+      star.el.style.height = size + 'px';
+      star.el.style.filter = `drop-shadow(0 0 ${size/2}px #00fff4)`;
+    });
+    requestAnimationFrame(animateStars);
+  }
+  animateStars();
+
+  // Chat functionality
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendButton = document.getElementById('sendButton');
+  const voiceButton = document.getElementById('voiceButton');
+  const robot = document.getElementById('robot');
+  const speechBubble = document.getElementById('speechBubble');
+  
+  let isListening = false;
+  let recognition;
+  const synth = window.speechSynthesis;
+
+  // Initialize speech recognition if available
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    recognition.onstart = function() {
+      isListening = true;
+      voiceButton.classList.add('listening');
+      showSpeechBubble("Listening...");
+    };
+    
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      chatInput.value = transcript;
+      sendMessage();
+    };
+    
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error', event.error);
+      isListening = false;
+      voiceButton.classList.remove('listening');
+      showSpeechBubble("Sorry, I didn't catch that. Try typing your question.");
+    };
+    
+    recognition.onend = function() {
+      isListening = false;
+      voiceButton.classList.remove('listening');
+    };
+  } else {
+    voiceButton.style.display = 'none';
+  }
+
+  function showSpeechBubble(text, duration = 3000) {
+    speechBubble.textContent = text;
+    speechBubble.classList.add('show');
+    setTimeout(() => {
+      speechBubble.classList.remove('show');
+    }, duration);
+  }
+
+  function speak(text, showBubble = true) {
+    if (synth.speaking) {
+      synth.cancel();
+    }
+    if (!text) return;
+    
+    if (showBubble) {
+      showSpeechBubble(text, Math.max(3000, text.length * 100));
+    }
+    
+    const utterThis = new SpeechSynthesisUtterance(text);
+    utterThis.lang = 'en-US';
+    utterThis.rate = 1;
+    synth.speak(utterThis);
+  }
+
+  function addMessage(content, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(isUser ? 'user-message' : 'ai-message');
+    
+    if (isUser) {
+      messageDiv.textContent = content;
+    } else {
+      messageDiv.innerHTML = content;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function showTypingIndicator() {
+    const typingDiv = document.createElement('div');
+    typingDiv.classList.add('typing-indicator');
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+      <span></span>
+      <span></span>
+      <span></span>
+    `;
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function removeTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+      typingIndicator.remove();
+    }
+  }
+
+  function generateAIResponse(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // Sample responses based on keywords
+    if (lowerMessage.includes('market research') || lowerMessage.includes('market analysis')) {
+      return {
+        text: "Here are the best resources for market research:",
+        links: [
+          {
+            url: "https://www.statista.com",
+            title: "Statista",
+            description: "Comprehensive statistics and reports on various industries and markets.",
+            bestChoice: "Best for: Quick access to reliable statistics and market data."
+          },
+          {
+            url: "https://www.gartner.com",
+            title: "Gartner",
+            description: "Leading research and advisory company providing insights into technology and business trends.",
+            bestChoice: "Best for: In-depth technology and business trend analysis."
+          },
+          {
+            url: "https://www.forrester.com",
+            title: "Forrester Research",
+            description: "Research and advisory company focusing on technology and market dynamics.",
+            bestChoice: "Best for: Customer experience and technology impact analysis."
+          }
+        ]
+      };
+    } else if (lowerMessage.includes('business plan') || lowerMessage.includes('startup')) {
+      return {
+        text: "Here are excellent resources for creating a business plan:",
+        links: [
+          {
+            url: "https://www.sba.gov/business-guide/plan-your-business/write-your-business-plan",
+            title: "SBA Business Plan Guide",
+            description: "Official U.S. Small Business Administration guide to writing a business plan.",
+            bestChoice: "Best for: Official, comprehensive business plan guidance."
+          },
+          {
+            url: "https://www.score.org/resource/business-plan-template-startup",
+            title: "SCORE Business Plan Template",
+            description: "Free business plan template and guidance from SCORE mentors.",
+            bestChoice: "Best for: Free templates and mentorship support."
+          },
+          {
+            url: "https://www.bplans.com",
+            title: "Bplans",
+            description: "Extensive collection of business plan templates and examples.",
+            bestChoice: "Best for: Variety of templates and industry-specific examples."
+          }
+        ]
+      };
+    } else if (lowerMessage.includes('digital marketing') || lowerMessage.includes('online marketing')) {
+      return {
+        text: "Here are top resources for digital marketing strategies:",
+        links: [
+          {
+            url: "https://digitalmarketinginstitute.com",
+            title: "Digital Marketing Institute",
+            description: "Comprehensive guides and courses on all aspects of digital marketing.",
+            bestChoice: "Best for: Learning digital marketing fundamentals and advanced strategies."
+          },
+          {
+            url: "https://blog.hubspot.com/marketing",
+            title: "HubSpot Marketing Blog",
+            description: "In-depth articles on inbound marketing, SEO, content marketing, and more.",
+            bestChoice: "Best for: Practical tips and latest trends in digital marketing."
+          },
+          {
+            url: "https://neilpatel.com/blog",
+            title: "Neil Patel's Blog",
+            description: "Actionable marketing advice from a leading digital marketer.",
+            bestChoice: "Best for: Actionable SEO and content marketing strategies."
+          }
+        ]
+      };
+    } else if (lowerMessage.includes('investment') || lowerMessage.includes('funding')) {
+      return {
+        text: "Here are valuable resources for business investment and funding:",
+        links: [
+          {
+            url: "https://www.crunchbase.com",
+            title: "Crunchbase",
+            description: "Platform for finding business information about private and public companies.",
+            bestChoice: "Best for: Researching potential investors and funding opportunities."
+          },
+          {
+            url: "https://www.angel.co",
+            title: "AngelList",
+            description: "Platform connecting startups with investors and job seekers.",
+            bestChoice: "Best for: Connecting with angel investors and startup funding."
+          },
+          {
+            url: "https://www.vc-list.com",
+            title: "VC List",
+            description: "Comprehensive database of venture capital firms and partners.",
+            bestChoice: "Best for: Finding venture capital firms that match your industry."
+          }
+        ]
+      };
+    } else if (lowerMessage.includes('productivity') || lowerMessage.includes('efficiency')) {
+      return {
+        text: "Here are excellent resources to boost business productivity:",
+        links: [
+          {
+            url: "https://asana.com",
+            title: "Asana",
+            description: "Project management tool designed to help teams organize, track, and manage their work.",
+            bestChoice: "Best for: Team collaboration and project management."
+          },
+          {
+            url: "https://trello.com",
+            title: "Trello",
+            description: "Visual collaboration tool that creates a shared perspective on any project.",
+            bestChoice: "Best for: Visual project management and simple task tracking."
+          },
+          {
+            url: "https://www.notion.so",
+            title: "Notion",
+            description: "All-in-one workspace for notes, tasks, wikis, and databases.",
+            bestChoice: "Best for: Integrated workspace combining multiple productivity tools."
+          }
+        ]
+      };
+    } else {
+      return {
+        text: "Here are some general business resources that might help:",
+        links: [
+          {
+            url: "https://www.harvardbusiness.org",
+            title: "Harvard Business Review",
+            description: "Leading source of management thinking and research.",
+            bestChoice: "Best for: Cutting-edge business insights and research."
+          },
+          {
+            url: "https://www.mckinsey.com/insights",
+            title: "McKinsey Insights",
+            description: "In-depth analysis and research on business and economic issues.",
+            bestChoice: "Best for: Strategic business insights and industry analysis."
+          },
+          {
+            url: "https://www.entrepreneur.com",
+            title: "Entrepreneur",
+            description: "Advice, insights, profiles and guides for established and aspiring entrepreneurs.",
+            bestChoice: "Best for: Practical advice for entrepreneurs and small business owners."
+          }
+        ]
+      };
+    }
+  }
+
+  function sendMessage() {
+    const message = chatInput.value.trim();
+    if (message === '') return;
+    
+    // Add user message
+    addMessage(message, true);
+    chatInput.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Simulate AI processing time
+    setTimeout(() => {
+      removeTypingIndicator();
+      
+      // Generate AI response
+      const aiResponse = generateAIResponse(message);
+      
+      // Format the AI response with links
+      let formattedResponse = `<strong>AI Assistant:</strong> ${aiResponse.text}<div class="links-container">`;
+      
+      aiResponse.links.forEach(link => {
+        formattedResponse += `
+          <div class="link-item">
+            <a href="${link.url}" target="_blank">${link.title}</a>
+            <div class="description">${link.description}</div>
+            <div class="best-choice">${link.bestChoice}</div>
+          </div>
+        `;
+      });
+      
+      formattedResponse += `</div>`;
+      
+      // Add AI message
+      addMessage(formattedResponse);
+      
+      // Speak the response
+      speak(aiResponse.text + " I've provided " + aiResponse.links.length + " resources with explanations.");
+    }, 1500);
+  }
+
+  // Event listeners
+  sendButton.addEventListener('click', sendMessage);
+  
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+  
+  voiceButton.addEventListener('click', () => {
+    if (recognition && !isListening) {
+      recognition.start();
+    }
+  });
+
+  // Robot tutorial logic
+  const positions = [
+    { left: 20, top: null, bottom: 40, description: 'bottom left' },
+    { left: '50%', top: 40, bottom: null, transform: 'translateX(-50%)', description: 'top center' },
+    { left: '50%', top: '50%', bottom: null, transform: 'translate(-50%, -50%)', description: 'center middle' },
+    { left: 'calc(100% - 140px)', top: null, bottom: 40, description: 'bottom right' },
+  ];
+
+  const tutorialLines = [
+    "Welcome to the Ask AI page! I'm here to help you navigate this powerful tool.",
+    "You can type your question in the chat box or use the voice button to speak your query.",
+    "The AI will analyze your request and provide you with the best resources and links from across the web.",
+    "Each recommendation includes an explanation of why it's valuable for your business.",
+    "Try asking about market research, business plans, digital marketing, or any business topic!",
+    "Click me anytime to hear these tips again!"
+  ];
+
+  const randomMessages = [
+    "Did you know our AI can find resources for any business topic?",
+    "Try asking about investment opportunities or productivity tools!",
+    "The voice input feature works great for hands-free querying.",
+    "Our AI curates the best resources from across the web for you.",
+    "I love helping business professionals find the information they need!",
+    "Each link comes with an explanation of why it's valuable for you."
+  ];
+
+  let tutorialStep = 0;
+  let isMoving = false;
+
+  function moveRobotTo(pos, transform = '') {
+    if (isMoving) return;
+    isMoving = true;
+    
+    robot.classList.add('walk');
+    robot.style.transition = 'all 2s ease-in-out';
+    robot.style.left = typeof pos.left === 'number' ? pos.left + 'px' : pos.left;
+    if (pos.top !== null) {
+      robot.style.top = typeof pos.top === 'number' ? pos.top + 'px' : pos.top;
+      robot.style.bottom = '';
+    } else {
+      robot.style.bottom = typeof pos.bottom === 'number' ? pos.bottom + 'px' : pos.bottom;
+      robot.style.top = '';
+    }
+    robot.style.transform = transform || '';
+    
+    setTimeout(() => {
+      robot.classList.remove('walk');
+      isMoving = false;
+    }, 2000);
+  }
+
+  function robotSitOnElement(el) {
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const left = rect.left + scrollLeft + rect.width/2 - 70;
+    const top = rect.top + scrollTop - 160;
+    
+    robot.classList.add('walk');
+    robot.style.transition = 'all 2s ease-in-out';
+    robot.style.left = left + 'px';
+    robot.style.top = top + 'px';
+    robot.style.bottom = '';
+    robot.style.transform = '';
+    
+    setTimeout(() => {
+      robot.classList.remove('walk');
+      robot.classList.add('sit');
+    }, 2000);
+  }
+  
+  function robotStandUp() {
+    robot.classList.remove('sit');
+  }
+
+  function getRandomPosition() {
+    const margin = 140; // Robot width + some padding
+    const x = randomRange(margin, window.innerWidth - margin);
+    const y = randomRange(margin, window.innerHeight - margin);
+    return { left: x + 'px', top: y + 'px' };
+  }
+
+  async function runTutorial() {
+    while (true) {
+      const pos = positions[tutorialStep % positions.length];
+      robotStandUp();
+      moveRobotTo(pos, pos.transform || '');
+      speak(tutorialLines[tutorialStep % tutorialLines.length]);
+      
+      tutorialStep++;
+      await new Promise(r => setTimeout(r, 7000));
+    }
+  }
+
+  let inactivityTimer;
+  function resetInactivityTimer() {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    robot.classList.remove('eat');
+    robotStandUp();
+    inactivityTimer = setTimeout(() => {
+      robot.classList.add('eat');
+      speak("I'm taking a little break to recharge. I'll be back soon to help you!");
+    }, 120000);
+  }
+
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+    window.addEventListener(evt, resetInactivityTimer);
+  });
+  resetInactivityTimer();
+
+  // Robot interaction
+  robot.addEventListener('click', () => {
+    if(tutorialStep === 0) tutorialStep = 0; 
+    else tutorialStep--;
+    
+    speak(tutorialLines[tutorialStep % tutorialLines.length]);
+    resetInactivityTimer();
+  });
+
+  robot.addEventListener('dblclick', () => {
+    const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+    speak(randomMessage);
+    
+    // Move to a random position
+    const randomPos = getRandomPosition();
+    moveRobotTo(randomPos);
+    
+    resetInactivityTimer();
+  });
+
+  robot.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      robot.click();
+    }
+  });
+
+  // Initialize the tutorial when the page loads
+  window.onload = () => {
+    // Welcome message
+    setTimeout(() => {
+      speak("Welcome to the Ask AI page! I'm Teddy, your guide. Try asking a business question in the chat!");
+    }, 1000);
+    
+    // Start the tutorial after a short delay
+    setTimeout(() => {
+      runTutorial();
+    }, 3000);
+  };
+  function refineQuery(userMessage) {
+  const lowerMessage = userMessage.toLowerCase();
+  
+  // Marketing related
+  if (lowerMessage.includes('marketing') || lowerMessage.includes('advertising') || lowerMessage.includes('promotion')) {
+    return userMessage + " business marketing strategies";
+  }
+  
+  // Finance related
+  if (lowerMessage.includes('finance') || lowerMessage.includes('funding') || lowerMessage.includes('investment')) {
+    return userMessage + " business finance guide";
+  }
+  
+  // Strategy related
+  if (lowerMessage.includes('strategy') || lowerMessage.includes('planning') || lowerMessage.includes('business plan')) {
+    return userMessage + " business strategy development";
+  }
+  
+  // Technology related
+  if (lowerMessage.includes('technology') || lowerMessage.includes('software') || lowerMessage.includes('digital')) {
+    return userMessage + " business technology solutions";
+  }
+  
+  // HR related
+  if (lowerMessage.includes('hr') || lowerMessage.includes('human resources') || lowerMessage.includes('hiring')) {
+    return userMessage + " human resources management";
+  }
+  
+  // Operations related
+  if (lowerMessage.includes('operations') || lowerMessage.includes('process') || lowerMessage.includes('efficiency')) {
+    return userMessage + " business operations improvement";
+  }
+  
+  // Default: add business context
+  return userMessage + " business";
+}
+async function generateAIResponse(userMessage) {
+  const refinedQuery = refineQuery(userMessage);
+  const searchResults = await searchGoogle(refinedQuery);
+  
+  if (searchResults.length > 0) {
+    let response = `I found ${searchResults.length} relevant resources for "${userMessage}":`;
+    
+    const links = searchResults.map((item, index) => ({
+      url: item.link,
+      title: item.title,
+      description: item.snippet,
+      bestChoice: index === 0 ? "Best choice: Most comprehensive resource" : ""
+    }));
+    
+    return {
+      text: response,
+      links: links
+    };
+  } else {
+    return {
+      text: "I couldn't find any specific resources for your query. Here are some general business resources that might help:",
+      links: [
+        {
+          url: "https://www.harvardbusiness.org",
+          title: "Harvard Business Review",
+          description: "Leading source of management thinking and research",
+          bestChoice: "Best choice: Authoritative business insights"
+        },
+        {
+          url: "https://www.mckinsey.com/insights",
+          title: "McKinsey Insights",
+          description: "In-depth analysis and research on business and economic issues",
+          bestChoice: ""
+        },
+        {
+          url: "https://www.entrepreneur.com",
+          title: "Entrepreneur",
+          description: "Advice, insights, profiles and guides for entrepreneurs",
+          bestChoice: ""
+        }
+      ]
+    };
+  }
+}
+async function generateAIResponse(userMessage) {
+  const refinedQuery = refineQuery(userMessage);
+  const searchResults = await searchGoogle(refinedQuery);
+  
+  if (searchResults.length > 0) {
+    let response = `I found ${searchResults.length} relevant resources for "${userMessage}":`;
+    
+    const links = searchResults.map((item, index) => ({
+      url: item.link,
+      title: item.title,
+      description: item.snippet,
+      bestChoice: index === 0 ? "Best choice: Most comprehensive resource" : ""
+    }));
+    
+    return {
+      text: response,
+      links: links
+    };
+  } else {
+    // Determine the category for fallback
+    const lowerMessage = userMessage.toLowerCase();
+    let fallbackLinks = [];
+    
+    if (lowerMessage.includes('marketing') || lowerMessage.includes('advertising') || lowerMessage.includes('promotion')) {
+      fallbackLinks = [
+        {
+          url: "https://www.digitalmarketinginstitute.com",
+          title: "Digital Marketing Institute",
+          description: "Comprehensive guides and courses on all aspects of digital marketing",
+          bestChoice: "Best choice: Leading digital marketing education"
+        },
+        {
+          url: "https://blog.hubspot.com/marketing",
+          title: "HubSpot Marketing Blog",
+          description: "In-depth articles on inbound marketing, SEO, content marketing, and more",
+          bestChoice: ""
+        }
+      ];
+    } else if (lowerMessage.includes('finance') || lowerMessage.includes('funding') || lowerMessage.includes('investment')) {
+      fallbackLinks = [
+        {
+          url: "https://www.investopedia.com",
+          title: "Investopedia",
+          description: "Financial education and insights for investors and businesses",
+          bestChoice: "Best choice: Comprehensive financial resource"
+        },
+        {
+          url: "https://www.sba.gov/funding-programs",
+          title: "SBA Funding Programs",
+          description: "Information on small business loans and funding options",
+          bestChoice: ""
+        }
+      ];
+    } else {
+      // General business resources
+      fallbackLinks = [
+        {
+          url: "https://www.harvardbusiness.org",
+          title: "Harvard Business Review",
+          description: "Leading source of management thinking and research",
+          bestChoice: "Best choice: Authoritative business insights"
+        },
+        {
+          url: "https://www.mckinsey.com/insights",
+          title: "McKinsey Insights",
+          description: "In-depth analysis and research on business and economic issues",
+          bestChoice: ""
+        },
+        {
+          url: "https://www.entrepreneur.com",
+          title: "Entrepreneur",
+          description: "Advice, insights, profiles and guides for entrepreneurs",
+          bestChoice: ""
+        }
+      ];
+    }
+    
+    return {
+      text: "I couldn't find any specific resources for your query. Here are some resources that might help:",
+      links: fallbackLinks
+    };
+  }
+}
+</script>
+
+</body>
+
+</html>

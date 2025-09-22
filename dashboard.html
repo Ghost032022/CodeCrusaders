@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ProAI Assistant - Dashboard</title>
+  <style>
+    /* Base and layout styles */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body, html {
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      perspective: 900px;
+      background: #101620;
+      color: #e0e0e0;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+      filter: brightness(0.3) contrast(1.2) saturate(1.3);
+      transform: perspective(900px) rotateX(5deg) rotateY(10deg);
+      z-index: -2;
+      transition: filter 0.5s ease;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 30, 0.5);
+      z-index: -1;
+    }
+
+    /* 3D Stars Background */
+    #stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      overflow: visible;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #00fff4;
+      box-shadow: 0 0 8px #00fff4;
+      animation-timing-function: linear;
+    }
+
+    header {
+      width: 100%;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(45deg, #0047ff, #00e0ff);
+      box-shadow: 0 0 25px #00e0ff;
+      text-align: center;
+      user-select: none;
+      position: relative;
+      z-index: 15;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    header h1 {
+      font-weight: 900;
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, #493c03, #473d02);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 5px;
+      flex-grow: 1;
+    }
+    #backBtn {
+      position: absolute;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #0047ff;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 30px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,71,255,0.7);
+      transition: background 0.3s ease;
+      z-index: 20;
+    }
+    #backBtn:hover {
+      background: #00e0ff;
+      color: #1a1a1a;
+      box-shadow: 0 6px 25px rgba(0,224,255,0.9);
+    }
+
+    /* User ID dropdown container */
+    #userMenuContainer {
+      position: absolute;
+      top: 50%;
+      right: 2rem;
+      transform: translateY(-50%);
+      z-index: 25;
+      user-select: none;
+    }
+    #userButton {
+      background: #0047ff;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 0.5rem 1.6rem;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,71,255,0.7);
+      transition: background 0.3s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #userButton:hover {
+      background: #00e0ff;
+      color: #1a1a1a;
+      box-shadow: 0 6px 25px rgba(0,224,255,0.9);
+    }
+    #dropdownMenu {
+      margin-top: 6px;
+      background: #00407a;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00bfff;
+      display: none;
+      flex-direction: column;
+      min-width: 140px;
+      overflow: hidden;
+    }
+    #dropdownMenu.show {
+      display: flex;
+    }
+    #dropdownMenu button {
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: left;
+      transition: background 0.3s ease;
+    }
+    #dropdownMenu button:hover {
+      background: #00e0ff;
+      color: #1a1a1a;
+    }
+
+    main {
+      flex-grow: 1;
+      width: 95vw;
+      max-width: 1400px;
+      padding: 2rem 2rem 4rem;
+      overflow-y: auto;
+      z-index: 10;
+      position: relative;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      margin: 1rem 0 2rem;
+      text-align: center;
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+    h2 {
+      font-weight: 800;
+      font-size: 2rem;
+      color: #00e0ff;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+    #greeting {
+      font-size: 1.4rem;
+      margin-bottom: 2rem;
+      color: #a0dfff;
+    }
+    /* Business info */
+    #businessInfo {
+      display: flex;
+      justify-content: space-around;
+      gap: 2rem;
+      flex-wrap: wrap;
+      color: #cceeff;
+      font-size: 1.1rem;
+    }
+    .info-card {
+      background: #004070;
+      flex: 1 1 280px;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 0 30px #00bfff, inset 0 0 20px rgba(0, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      user-select: none;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .info-card:hover {
+      box-shadow: 0 0 50px #00e0ff, inset 0 0 30px rgba(0, 255, 255, 0.4);
+      transform: translateY(-10px) translateZ(20px);
+    }
+    .info-card h3 {
+      margin-bottom: 1rem;
+      color: #00e0ff;
+      font-weight: 700;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+    /* Profit & Loss Display */
+    #profitLossContainer {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      user-select: none;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #00e0ff;
+    }
+    .profit-loss-box {
+      background: #004070;
+      border-radius: 20px;
+      padding: 2rem 3rem;
+      box-shadow: 0 0 40px #00bfff, inset 0 0 25px rgba(0, 255, 255, 0.3);
+      width: 220px;
+      text-align: center;
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .profit-loss-box:hover {
+      box-shadow: 0 0 60px #00ffff, inset 0 0 40px rgba(0, 255, 255, 0.5);
+      transform: translateY(-15px) translateZ(30px);
+    }
+    .profit-loss-title {
+      font-size: 1.7rem;
+      margin-bottom: 1rem;
+      color: #00e0ff;
+    }
+    .profit-loss-value {
+      font-size: 2.8rem;
+      color: #00ff99;
+    }
+    .loss-value {
+      color: #ff5050;
+    }
+    /* Opportunities container */
+    #opportunities {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      user-select: none;
+    }
+    .opportunity-box {
+      width: 220px;
+      height: 220px;
+      background: linear-gradient(135deg, #0047ff, #00e0ff);
+      border-radius: 20px;
+      box-shadow: 0 0 40px #00e0ff, inset 0 0 25px rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #101a29;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      perspective: 1000px;
+      transform-style: preserve-3d;
+    }
+    .opportunity-box:hover {
+      transform: scale(1.1) rotateY(15deg) rotateX(8deg) translateZ(20px);
+      box-shadow: 0 0 60px #00ffff, inset 0 0 35px rgba(255, 255, 255, 0.4);
+      z-index: 20;
+    }
+    .opportunity-box img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 6px #00ffff);
+    }
+    
+    /* Advice boxes */
+    #adviceBoxes {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+    
+    #adviceBoxes .opportunity-box {
+      height: auto;
+      padding: 1.5rem;
+    }
+    
+    #adviceBoxes .opportunity-box p {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    
+    /* Graph container */
+    #graphContainer {
+      margin-top: 2rem;
+      background: #004070;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 0 40px #00bfff, inset 0 0 25px rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    
+    #graphContainer:hover {
+      box-shadow: 0 0 60px #00e0ff, inset 0 0 40px rgba(0, 255, 255, 0.5);
+      transform: translateY(-10px) translateZ(20px);
+    }
+    
+    #profitLossGraph {
+      width: 100%;
+      height: 300px;
+      margin-top: 1rem;
+    }
+    
+    /* Scrollbar for main */
+    main::-webkit-scrollbar {
+      width: 8px;
+    }
+    main::-webkit-scrollbar-thumb {
+      background-color: #00e0ff;
+      border-radius: 6px;
+    }
+    main::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+  
+  <header>
+    <button id="backBtn" aria-label="Back to Login">Back</button>
+    <h1>ProAI Assistant - Dashboard</h1>
+    <div id="userMenuContainer">
+      <button id="userButton" aria-haspopup="true" aria-expanded="false">user@example.com ▼</button>
+      <div id="dropdownMenu" role="menu" aria-label="User menu">
+        <button id="logoutBtn" role="menuitem">Logout</button>
+      </div>
+    </div>
+  </header>
+  
+  <main>
+    <div id="greeting"></div>
+
+    <section id="businessSection">
+      <h2>Business Overview</h2>
+      <div id="businessInfo">
+        <div class="info-card">
+          <h3>Current Projects</h3>
+          <p>5 Active Projects</p>
+          <p>Last Updated: Today</p>
+        </div>
+        <div class="info-card">
+          <h3>Team Members</h3>
+          <p>12 People</p>
+          <p>Collaboration Tools Integrated</p>
+        </div>
+        <div class="info-card">
+          <h3>Client Feedback</h3>
+          <p>95% Positive</p>
+          <p>Resolved 120 Tickets</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="profitLossSection">
+      <h2>Profits & Losses (Last 30 Days)</h2>
+      <div id="profitLossContainer">
+        <div class="profit-loss-box" aria-live="polite" aria-label="Total profit in last 30 days">
+          <div class="profit-loss-title">Total Profit</div>
+          <div id="profitValue" class="profit-loss-value">₹0</div>
+        </div>
+        <div class="profit-loss-box" aria-live="polite" aria-label="Total loss in last 30 days">
+          <div class="profit-loss-title">Total Loss</div>
+          <div id="lossValue" class="profit-loss-value loss-value">₹0</div>
+        </div>
+      </div>
+      
+      <div id="graphContainer">
+        <h3 style="color: #00e0ff; margin-bottom: 1rem;">Profit & Loss Trend (Last 30 Days)</h3>
+        <canvas id="profitLossGraph"></canvas>
+      </div>
+    </section>
+
+    <section id="oppSection">
+      <h2>New Opportunities</h2>
+      <div id="opportunities">
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Opportunity to expand into AI services">
+          <img src="https://img.icons8.com/ios-filled/50/0000ff/brain.png" alt="AI Brain Icon" />
+          Expand AI Services
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Opportunity for sustainable product development">
+          <img src="https://img.icons8.com/ios-filled/50/0000ff/leaf.png" alt="Leaf Icon" />
+          Sustainable Products
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Opportunity for remote workforce expansion">
+          <img src="https://img.icons8.com/ios-filled/50/0000ff/conference-call.png" alt="Conference Call Icon" />
+          Remote Workforce
+        </div>
+      </div>
+    </section>
+    
+    <section id="adviceSection">
+      <h2>Business Advice & Suggestions</h2>
+      <div id="adviceBoxes">
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Optimize costs to increase profitability">
+          <img src="https://img.icons8.com/ios-filled/50/0000ff/money-bag.png" alt="Money Bag Icon" />
+          Optimize Costs
+          <p>Review expenses regularly to identify and cut unnecessary costs.</p>
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Diversify product offerings to expand market">
+          <img src="https://img.icons8.com/ios-filled/50/0000ff/product.png" alt="Product Icon" />
+          Diversify Products
+          <p>Expand your product line to attract wider customer segments.</p>
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Enhance customer experience for retention and growth">
+          <img src="https://img.icons8.com/ios-filled/50/0000ff/customer-insight.png" alt="Customer Icon" />
+          Enhance Customer Experience
+          <p>Focus on customer service to build loyalty and repeat business.</p>
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Leverage technology and automation">
+          <img src="https://technofaq.org/wp-content/uploads/2021/10/gears_build_management.jpg" alt="Automation Icon" />
+          Leverage Automation
+          <p>Automate repetitive tasks to save time and reduce errors.</p>
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Analyze market trends for smarter decisions">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIPD9TFuqWivyZf4CMz4gUdWwrujbW0gSQVg&s" alt="Analytics Icon" />
+          Analyze Market Trends
+          <p>Use data analytics to identify opportunities and risks early.</p>
+        </div>
+        <div class="opportunity-box" tabindex="0" role="button" aria-label="Improve cash flow management">
+          <img src="https://www.velotrade.com/wp-content/uploads/cash-flow/cash-flow-management-for-businesses.png" alt="Cash Flow Icon" />
+          Improve Cash Flow
+          <p>Optimize receivables and payables to maintain healthy liquidity.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Create 3D starfield background
+    const starsContainer = document.getElementById('stars');
+    const starCount = 150;
+    const stars = [];
+    const maxDepth = 1000;
+
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    // Create stars with x,y,z and DOM element
+    for(let i=0; i<starCount; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      const size = randomRange(1,3);
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      starsContainer.appendChild(star);
+      stars.push({
+        el: star,
+        x: randomRange(-window.innerWidth/2, window.innerWidth/2),
+        y: randomRange(-window.innerHeight/2, window.innerHeight/2),
+        z: maxDepth,
+        size: size,
+        speed: randomRange(0.5, 2)
+      });
+    }
+
+    function animateStars() {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      stars.forEach(star => {
+        star.z -= star.speed;
+        if (star.z < 1) star.z = maxDepth;
+        const scale = 700 / (700 + star.z);
+        const x = cx + star.x * scale;
+        const y = cy + star.y * scale;
+        const size = star.size * scale * 1.8;
+        star.el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+        star.el.style.opacity = Math.min(1, scale * 2);
+        star.el.style.width = size + 'px';
+        star.el.style.height = size + 'px';
+        star.el.style.filter = `drop-shadow(0 0 ${size/2}px #00fff4)`;
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    // Read query params for email and password (basic)
+    function getQueryParams() {
+      const params = {};
+      location.search.substr(1).split("&").forEach(item => {
+        const [key, val] = item.split("=");
+        if (key) params[key] = decodeURIComponent(val);
+      });
+      return params;
+    }
+
+    const params = getQueryParams();
+    const email = params.email || "user@example.com";
+
+    // Show greeting
+    const greetingEl = document.getElementById('greeting');
+    greetingEl.textContent = `Welcome back, ${email}! Here's your personalized dashboard.`;
+
+    // Show email in user button
+    const userButton = document.getElementById('userButton');
+    userButton.textContent = email + ' ▼';
+
+    // Toggle dropdown menu
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    userButton.addEventListener('click', () => {
+      const expanded = userButton.getAttribute('aria-expanded') === 'true';
+      userButton.setAttribute('aria-expanded', !expanded);
+      dropdownMenu.classList.toggle('show');
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', e => {
+      if (!userButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('show');
+        userButton.setAttribute('aria-expanded', false);
+      }
+    });
+
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      window.location.href = 'login.html'; // Adjust path as needed
+    });
+
+    // Back button
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.location.href = 'login.html'; // Adjust path as needed
+    });
+
+    // Generate sample profit and loss data for last 30 days
+    const data = [];
+    const labels = [];
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+      data.push(Math.floor(Math.random() * 4000) - 1000);
+    }
+
+    // Calculate total profit and loss
+    const totalProfit = data.reduce((sum, val) => val > 0 ? sum + val : sum, 0);
+    const totalLoss = data.reduce((sum, val) => val < 0 ? sum + Math.abs(val) : sum, 0);
+
+    // Animate the counting numbers
+    function animateCount(element, start, end, duration) {
+      let startTimestamp = null;
+      const step = timestamp => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        element.textContent = `₹${value.toLocaleString()}`;
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    animateCount(document.getElementById('profitValue'), 0, totalProfit, 2000);
+    animateCount(document.getElementById('lossValue'), 0, totalLoss, 2000);
+
+    // Create profit/loss graph
+    const canvas = document.getElementById('profitLossGraph');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      drawGraph();
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    function drawGraph() {
+      const width = canvas.width;
+      const height = canvas.height;
+      const padding = 40;
+      const graphWidth = width - padding * 2;
+      const graphHeight = height - padding * 2;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Find min and max values
+      const maxValue = Math.max(...data);
+      const minValue = Math.min(...data);
+      const range = maxValue - minValue;
+      
+      // Draw grid lines
+      ctx.strokeStyle = 'rgba(0, 224, 255, 0.2)';
+      ctx.lineWidth = 1;
+      
+      // Horizontal grid lines
+      for (let i = 0; i <= 5; i++) {
+        const y = padding + (i / 5) * graphHeight;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+      }
+      
+      // Draw zero line
+      const zeroY = padding + graphHeight - (0 - minValue) / range * graphHeight;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(padding, zeroY);
+      ctx.lineTo(width - padding, zeroY);
+      ctx.stroke();
+      
+      // Draw data points and lines
+      const pointRadius = 4;
+      const xStep = graphWidth / (data.length - 1);
+      
+      // Draw line
+      ctx.beginPath();
+      ctx.lineWidth = 3;
+      
+      for (let i = 0; i < data.length; i++) {
+        const x = padding + i * xStep;
+        const y = padding + graphHeight - (data[i] - minValue) / range * graphHeight;
+        
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      
+      // Create gradient for line
+      const gradient = ctx.createLinearGradient(0, 0, width, 0);
+      gradient.addColorStop(0, '#ff5050'); // Red for negative
+      gradient.addColorStop(0.5, '#ffffff'); // White for zero
+      gradient.addColorStop(1, '#00ff99'); // Green for positive
+      
+      ctx.strokeStyle = gradient;
+      ctx.stroke();
+      
+      // Draw points
+      for (let i = 0; i < data.length; i++) {
+        const x = padding + i * xStep;
+        const y = padding + graphHeight - (data[i] - minValue) / range * graphHeight;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
+        ctx.fillStyle = data[i] >= 0 ? '#00ff99' : '#ff5050';
+        ctx.fill();
+        
+        // Add glow effect
+        ctx.shadowColor = data[i] >= 0 ? '#00ff99' : '#ff5050';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      
+      // Draw labels
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '12px Segoe UI';
+      ctx.textAlign = 'center';
+      
+      // X-axis labels (show every 5th label to avoid crowding)
+      for (let i = 0; i < data.length; i += 5) {
+        const x = padding + i * xStep;
+        ctx.fillText(labels[i], x, height - 10);
+      }
+      
+      // Y-axis labels
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      
+      for (let i = 0; i <= 5; i++) {
+        const value = minValue + (range * (5 - i) / 5);
+        const y = padding + (i / 5) * graphHeight;
+        ctx.fillText(`₹${Math.round(value).toLocaleString()}`, padding - 5, y);
+      }
+    }
+  </script>
+</body>
+</html>
